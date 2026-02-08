@@ -8,6 +8,7 @@
 // dependencies
 const http = require("http");
 const url = require("url");
+const { StringDecoder } = require("string_decoder");
 
 // app object - module scafolding
 const app = {};
@@ -32,9 +33,22 @@ app.handleReqRes = (req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
   const path = parsedUrl.pathname;
   const trimedPath = path.replace(/\/$/, "");
-  console.log(trimedPath);
+  const method = req.method.toLowerCase();
+  const queryStringObject = parsedUrl.searchParams;
 
-  res.end("Hello Programmers  ");
+  const decoder = new StringDecoder('utf-8');
+  let realData = '';
+
+  req.on('data',(buffer)=>{
+    realData += decoder.write(buffer);
+  })
+
+  req.on('end', ()=>{
+    decoder.end();
+    console.log(realData);
+  })
+
+  res.end("Hello Programmers.");
 };
 
 // start server
