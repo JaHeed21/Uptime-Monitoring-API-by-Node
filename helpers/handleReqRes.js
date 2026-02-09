@@ -45,8 +45,8 @@ handler.handleReqRes = (req, res) => {
 
   req.on('end', () => {
     realData += decoder.end();
-
     // requestProperties.body = realData;
+    
       choosenHandler(requestProperties, (statusCode, payload) => {
       statusCode = typeof statusCode === 'number' ? statusCode : 500;
       payload = typeof payload === 'object' ? payload : {};
