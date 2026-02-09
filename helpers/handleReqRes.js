@@ -8,11 +8,14 @@
 //dependancies
 const url = require("url");
 const { StringDecoder } = require("string_decoder");
+const routes = require('../routing');
+const { notFoundHandler } = require('../handlers/routeHandlers/notFoundHandler');
+
 
 // module scafolding - handler object
-const hander = {};
+const handler = {};
 
-hander.handleReqRes = (req, res) => {
+handler.handleReqRes = (req, res) => {
   // get the url and parse it
   // const parsedUrl = url.parse(req.url, true);
   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
@@ -20,7 +23,29 @@ hander.handleReqRes = (req, res) => {
   const trimedPath = path.replace(/\/$/, "");
   const method = req.method.toLowerCase();
   const queryStringObject = parsedUrl.searchParams;
+  const requestHeaders = req.headers;
 
+  const requestProperties = {
+    parsedUrl,
+    path,
+    trimedPath,
+    method,
+    queryStringObject,
+    requestHeaders,
+  };
+
+  const choosenHandler = routes[trimedPath] || notFoundHandler;
+
+  choosenHandler(requestProperties, (statusCode, payload) => {
+    statusCode = typeof statusCode === 'number' ? statusCode : 500;
+    payload = typeof payload === 'object' ? payload : {};
+    
+    const payloadString = JSON.stringify(payload);
+
+    res.writeHead(statusCode);
+    res.end(payloadString);
+  })
+  
   const decoder = new StringDecoder('utf-8');
   let realData = '';
 
@@ -36,4 +61,4 @@ hander.handleReqRes = (req, res) => {
   res.end("Hello Programmers.");
 }
 
-module.exports = hander;
+module.exports = handler;

@@ -8,8 +8,8 @@
 // module scafolding
 const handler = {};
 
-handler.sampleHandler = (req, res) => {
-  res.end("sample Handlers");
+handler.sampleHandler = (requestProperties, callback) => {
+  callback(200, { name: "sample handler" });
 }
 
 module.exports = handler;
