@@ -20,7 +20,7 @@ handler.handleReqRes = (req, res) => {
   // const parsedUrl = url.parse(req.url, true);
   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
   const path = parsedUrl.pathname;
-  const trimedPath = path.replace(/\/$/, "");
+  const trimedPath = path.replace(/^\/+|\/+$/g, '');
   const method = req.method.toLowerCase();
   const queryStringObject = parsedUrl.searchParams;
   const requestHeaders = req.headers;
@@ -34,31 +34,30 @@ handler.handleReqRes = (req, res) => {
     requestHeaders,
   };
 
-  const choosenHandler = routes[trimedPath] || notFoundHandler;
-
-  choosenHandler(requestProperties, (statusCode, payload) => {
-    statusCode = typeof statusCode === 'number' ? statusCode : 500;
-    payload = typeof payload === 'object' ? payload : {};
-    
-    const payloadString = JSON.stringify(payload);
-
-    res.writeHead(statusCode);
-    res.end(payloadString);
-  })
-  
   const decoder = new StringDecoder('utf-8');
   let realData = '';
 
-  req.on('data',(buffer)=>{
+  const choosenHandler = routes[trimedPath] || notFoundHandler;
+
+  req.on('data', (buffer) => {
     realData += decoder.write(buffer);
-  })
+  });
 
-  req.on('end', ()=>{
-    decoder.end();
-    console.log(realData);
-  })
+  req.on('end', () => {
+    realData += decoder.end();
 
-  res.end("Hello Programmers.");
+    // requestProperties.body = realData;
+      choosenHandler(requestProperties, (statusCode, payload) => {
+      statusCode = typeof statusCode === 'number' ? statusCode : 500;
+      payload = typeof payload === 'object' ? payload : {};
+      
+      const payloadString = JSON.stringify(payload);
+  
+    //   res.setHeader('Content-Type', 'application/json');
+      res.writeHead(statusCode);
+      res.end(payloadString);
+    });
+  });
 }
 
 module.exports = handler;

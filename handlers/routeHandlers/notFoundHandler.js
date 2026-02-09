@@ -9,7 +9,7 @@
 const handler = {};
 
 handler.notFoundHandler = (requestProperties, callback) => {
-  callback(404, { message: "Not Found" });
+  callback(404, { message: "request Not Found" });
 }
 
 module.exports = handler;
