@@ -15,7 +15,7 @@ environments.staging={
 
 environments.production={
     'envName':'production',
-    'port':5000,
+    'port':5001,
 }
 
 //determine which environment passed
