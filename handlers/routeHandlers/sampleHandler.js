@@ -9,7 +9,13 @@
 const handler = {};
 
 handler.sampleHandler = (requestProperties, callback) => {
-  callback(200, { name: "sample handler" });
-}
+  // if (requestProperties.res) {
+  //   requestProperties.res.setHeader("Content-Type", "application/json");
+  // }
+
+  callback(200, {
+    name: "sample handler",
+  });
+};
 
 module.exports = handler;
