@@ -8,20 +8,26 @@
 //module Scafolding
 const environments = {};
 
-environments.staging={
-    'envName':'staging',
-    'port':3000,
-}
+environments.staging = {
+  envName: "staging",
+  port: 3000,
+  secretKey: "hjgdhfgkjhdakj",
+};
 
-environments.production={
-    'envName':'production',
-    'port':5001,
-}
+environments.production = {
+  envName: "production",
+  port: 5001,
+  secretKey: "dasfhlskvhdklj",
+};
 
 //determine which environment passed
-const currentEnvironment = typeof(process.env.NODE_ENV) === 'string' ? process.env.NODE_ENV : 'staging';
+const currentEnvironment =
+  typeof process.env.NODE_ENV === "string" ? process.env.NODE_ENV : "staging";
 
-const environmentToExport = typeof(environments[currentEnvironment]) === 'object' ? environments[currentEnvironment] : environments.staging;
+const environmentToExport =
+  typeof environments[currentEnvironment] === "object"
+    ? environments[currentEnvironment]
+    : environments.staging;
 
 //export environment
 module.exports = environmentToExport;
