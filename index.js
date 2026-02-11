@@ -32,19 +32,23 @@ app.config = {
 //     console.log(err, data);
 // })
 
-data.update(
-  "New",
-  "test",
-  {
-    countryName: "Bangladesh",
-    language: "Bangla",
-    capital: "Chandpur",
-    currency: "Taka",
-  },
-  (err) => {
-    console.log("Error: ", err);
-  },
-);
+// data.update(
+//   "New",
+//   "test",
+//   {
+//     countryName: "Bangladesh",
+//     language: "Bangla",
+//     capital: "Chandpur",
+//     currency: "Taka",
+//   },
+//   (err) => {
+//     console.log("Error: ", err);
+//   },
+// );
+
+// data.delete("New", "test", (err) => {
+//   console.log(err);
+// });
 
 // create server
 app.createSever = () => {
