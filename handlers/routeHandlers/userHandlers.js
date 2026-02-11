@@ -7,7 +7,7 @@
 
 //dependencies
 const data = require("../../lib/data");
-const { hash } = require("../../helpers/utilities");
+const { hash, parseJSON } = require("../../helpers/utilities");
 
 // module scafolding
 const handler = {};
@@ -24,9 +24,30 @@ handler.userHandler = (requestProperties, callback) => {
 
 handler._users = {};
 handler._users.get = (requestProperties, callback) => {
-  callback(200, {
-    message: "This is User Get url",
-  });
+  //chcek the phone number is valid or not
+  const phone =
+    typeof requestProperties.queryStringObject.phone === "string" &&
+    requestProperties.queryStringObject.phone.trim().length === 11
+      ? requestProperties.queryStringObject.phone.trim()
+      : false;
+
+  if (phone) {
+    // lookup the user
+    data.read("users", phone, (err, user) => {
+      const userObject = parseJSON(user);
+      if (!err && userObject) {
+        callback(200, userObject);
+      } else {
+        callback(404, {
+          error: "You have a problem in your request! Requested user not found",
+        });
+      }
+    });
+  } else {
+    callback(404, {
+      error: "You have a problem in your request! Requested user not found",
+    });
+  }
 };
 
 handler._users.post = (requestProperties, callback) => {
@@ -81,7 +102,7 @@ handler._users.post = (requestProperties, callback) => {
         });
       } else {
         callback(500, {
-          error: "Server side error",
+          error: "User Alrady exists....",
         });
       }
     });
