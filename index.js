@@ -9,8 +9,7 @@
 const http = require("http");
 const { handleReqRes } = require("./helpers/handleReqRes");
 const environment = require("./helpers/environments");
-const data  = require('./lib/data');
-
+const data = require("./lib/data");
 
 // app object - module scafolding
 const app = {};
@@ -22,7 +21,7 @@ app.config = {
 
 //testing file system
 
-// data.create('New', 'test', 
+// data.create('New', 'test',
 //     {'countryName': 'Bangladesh', 'language': 'Bangla', 'capital': 'Dhaka', 'currency': 'Taka'},
 //     (err)=>{
 //         console.log(err);
@@ -33,13 +32,19 @@ app.config = {
 //     console.log(err, data);
 // })
 
-data.update('New', 'test', 
-    {'countryName': 'Bangladesh', 'language': 'English', 'capital': 'Dhaka', 'currency': 'Taka'},
-    (err)=>{
-        console.log(err);
-    }
-)
-
+data.update(
+  "New",
+  "test",
+  {
+    countryName: "Bangladesh",
+    language: "Bangla",
+    capital: "Chandpur",
+    currency: "Taka",
+  },
+  (err) => {
+    console.log("Error: ", err);
+  },
+);
 
 // create server
 app.createSever = () => {

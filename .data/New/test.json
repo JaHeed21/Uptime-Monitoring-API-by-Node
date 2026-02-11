@@ -1,1 +1,6 @@
-{"countryName":"Bangladesh","language":"English","capital":"Dhaka","currency":"Taka"}
+{
+  "countryName": "Bangladesh",
+  "language": "Bangla",
+  "capital": "Chandpur",
+  "currency": "Taka"
+}
