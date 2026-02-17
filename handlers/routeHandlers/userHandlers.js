@@ -30,22 +30,24 @@ handler._users.get = (requestProperties, callback) => {
     requestProperties.queryStringObject.phone.trim().length === 11
       ? requestProperties.queryStringObject.phone.trim()
       : false;
-
+      
+      
   if (phone) {
     // lookup the user
     data.read("users", phone, (err, user) => {
-      const userObject = parseJSON(user);
+      const userObject = {...parseJSON(user)};
       if (!err && userObject) {
+        delete userObject.password;
         callback(200, userObject);
       } else {
         callback(404, {
-          error: "You have a problem in your request! Requested user not found",
+          error: "User Object not found",
         });
       }
     });
   } else {
     callback(404, {
-      error: "You have a problem in your request! Requested user not found",
+      error: "Problem with reading user object",
     });
   }
 };
@@ -110,9 +112,72 @@ handler._users.post = (requestProperties, callback) => {
 };
 
 handler._users.put = (requestProperties, callback) => {
-  callback(200, {
-    message: "This is User Put url",
-  });
+  const phone =
+    typeof requestProperties.body.phone === "string" &&
+    requestProperties.body.phone.trim().length === 11
+      ? requestProperties.body.phone
+      : false;  
+  
+  const firstName =
+    typeof requestProperties.body.firstName === "string" &&
+    requestProperties.body.firstName.trim().length > 0
+      ? requestProperties.body.firstName
+      : false;
+  const lastName =
+    typeof requestProperties.body.lastName === "string" &&
+    requestProperties.body.lastName.trim().length > 0
+      ? requestProperties.body.lastName
+      : false;
+  const password =
+    typeof requestProperties.body.password === "string" &&
+    requestProperties.body.password.trim().length > 3
+      ? requestProperties.body.password
+      : false;
+      
+  if (phone) {
+    if(firstName || lastName || password){
+      // lookup the user
+      data.read("users", phone, (err, uData) => {
+        const userData = { ...parseJSON(uData) };
+        if (!err && userData) {
+          if (firstName) {
+            userData.firstName = firstName;
+          }
+          if (lastName) {
+            userData.lastName = lastName;
+          }
+          if (password) {
+            userData.password = hash(password);
+          }
+          // store the user to File System
+          data.update("users", phone, userData, (err) => {
+            if (!err) {
+              callback(200, {
+                message: "User updated successfully",
+              });
+            } else {
+              callback(500, {
+                error: "Could not update user",
+              });
+            }
+          });
+        } else {
+          callback(404, {
+            error: "User Object not found",
+          });
+        }
+      });
+    }else{
+      callback(400, {
+        error: "Invalid Request. Problem with request parameters",
+      });
+    }
+    
+  }else{
+    callback(400, {
+      error: "Invalid Request. Phone Number is required",
+    });
+  }      
 };
 
 handler._users.delete = (requestProperties, callback) => {
