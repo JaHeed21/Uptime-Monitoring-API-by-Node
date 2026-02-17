@@ -181,9 +181,39 @@ handler._users.put = (requestProperties, callback) => {
 };
 
 handler._users.delete = (requestProperties, callback) => {
-  callback(200, {
-    message: "This is User Delete url",
-  });
+   const phone =
+    typeof requestProperties.queryStringObject.phone === "string" &&
+    requestProperties.queryStringObject.phone.trim().length === 11
+      ? requestProperties.queryStringObject.phone.trim()
+      : false;
+      
+      if (phone) {
+        // lookup the user
+        data.read("users", phone, (err, userData) => {
+          if (!err && userData) {
+            // delete the user
+            data.delete("users", phone, (err) => {
+              if (!err) {
+                callback(200, {
+                  message: "User deleted successfully",
+                });
+              } else {
+                callback(500, {
+                  error: "Could not delete user",
+                });
+              }
+            });
+          } else {
+            callback(404, {
+              error: "User Object not found",
+            });
+          }
+        });
+      } else {
+        callback(400, {
+          error: "Invalid Request. Phone Number is required",
+        });
+      }
 };
 
 module.exports = handler;
